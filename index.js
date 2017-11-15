@@ -14,7 +14,7 @@ const relatedLinks = db.get('relatedlinks');
 const users = db.get('users');
 
 const linksCount = 2;
-relatedLinks.find({}, {limit: linksCount, sort: {score: 1}})
+relatedLinks.find({}, {limit: linksCount, sort: {score: -1}})
   .then(function (links) {
     // sorted by name field
     // TODO: paginate users:
