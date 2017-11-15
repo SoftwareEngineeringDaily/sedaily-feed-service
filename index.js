@@ -13,7 +13,8 @@ feeds = db.create('feeds');
 const relatedLinks = db.get('relatedlinks');
 const users = db.get('users');
 
-const linksCount = 2;
+const linksCount = 50; // How many links do we put in our feed
+
 relatedLinks.find({}, {limit: linksCount, sort: {score: -1}})
   .then(function (links) {
     // sorted by name field
@@ -23,27 +24,30 @@ relatedLinks.find({}, {limit: linksCount, sort: {score: -1}})
     });
   })
   .then(function({users, links}) {
+    const items = [];
     for(let ii = 0; ii < users.length; ii++) {
       const user = users[ii];
       // TODO: filter links:
       const item = {userId: user._id, links};
-      console.log('inserting?');
-
-      feeds.insert([item]).then(function(docs){
-        console.log('inserted', docs);
-      })
-      .catch(function(error) {
-        console.log('error', error);
-      });
+      items.push(item);
     }
 
+    return feeds.insert(items).then(function(docs){
+      console.log('Inserted all docs!');
+    })
+    .catch(function(error) {
+      console.log('error', error);
+    });
+
+
+  })
+  .then(function(){
+    console.log('Done');
+    db.close();
+    process.exit();
+    return;
   });
 
 
-
-
   /*
-  db.close();
-  process.exit();
-  return;
    */
