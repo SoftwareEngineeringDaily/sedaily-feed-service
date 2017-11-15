@@ -1,5 +1,8 @@
 require('dotenv').config();
 const db = require('monk')(process.env.MONGO_DB);
+db.then(() => {
+  console.log('Connected correctly to server')
+})
 
 
 let  feeds = db.get('feeds');
