@@ -5,8 +5,11 @@ db.then(() => {
 })
 
 
+// TODO: add image for each link: 
+
 let  feeds = db.get('feeds');
 // First we clear our feeds collecion
+// XXX: WE ARE dropping the db every time and rebuilding it:
 feeds.drop();
 feeds = db.create('feeds');
 
