@@ -7,8 +7,8 @@ db.then(() => {
 
 let  feeds = db.get('feeds');
 // First we clear our feeds collecion
-// feeds.drop();
-// feeds = db.create('feeds');
+feeds.drop();
+feeds = db.create('feeds');
 
 const relatedLinks = db.get('relatedlinks');
 const users = db.get('users');
@@ -23,18 +23,13 @@ relatedLinks.find({}, {limit: linksCount, sort: {score: 1}})
     });
   })
   .then(function({users, links}) {
-    // console.log('links', links);
-    // console.log('users', users);
     for(let ii = 0; ii < users.length; ii++) {
       const user = users[ii];
       // TODO: filter links:
-      const item = {userId: user._id, links: 'links'};
+      const item = {userId: user._id, links};
       console.log('inserting?');
 
-      feeds.insert([item], function(err, doc) {
-        console.log('err', err);
-        console.log('doc', doc);
-      }).then(function(docs){
+      feeds.insert([item]).then(function(docs){
         console.log('inserted', docs);
       })
       .catch(function(error) {
