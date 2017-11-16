@@ -31,7 +31,7 @@ relatedLinks.find({}, {limit: linksCount, sort: {score: -1}})
     for(let ii = 0; ii < users.length; ii++) {
       const user = users[ii];
       // TODO: filter links:
-      const item = {userId: user._id, links};
+      const item = {user: user._id, feedItems: links};
       items.push(item);
     }
 
