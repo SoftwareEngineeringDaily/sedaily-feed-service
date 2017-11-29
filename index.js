@@ -5,7 +5,7 @@ db.then(() => {
 })
 
 
-// TODO: add image for each link: 
+// TODO: add image for each link:
 
 let  feeds = db.get('feeds');
 // First we clear our feeds collecion

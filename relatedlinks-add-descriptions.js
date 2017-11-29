@@ -6,19 +6,13 @@ db.then(() => {
 })
 
 
-const getImage = function(link,  cb) {
+const getDescription = function(link,  cb) {
 
   var client = new MetaInspector(link.url, {});
   client.on("fetch", function(){
-    let image = client.image;
-    if (!image || image.length == 0) {
-      if (client.images && client.images.length > 0) {
-        image = client.images[0];
-      } else {
-        return cb('No image');
-      }
-    }
-    cb(null, image, link);
+    let description = client.description;
+    console.log("description", description);
+    cb(null, description, link);
   });
 
   client.on("error", function(err){
@@ -33,26 +27,25 @@ const getImage = function(link,  cb) {
 
 const relatedLinks = db.get('relatedlinks');
 
-relatedLinks.find({image: null}).then(function(links) {
+relatedLinks.find({description: null}).then(function(links) {
   // console.log('links', links);
   for(var ii = 0; ii < links.length; ii++) {
     const link = links[ii];
     // TODO: stagger the fetching of images:
 
-    getImage(link,  function(error, image, _link) {
+    getDescription(link,  function(error, description, _link) {
 
       if (error){ console.log('error', error); return; }
-      if (!image || image.length == 0){ console.log('no image'); return; }
-      console.log('got iamge!');
-      relatedLinks.update({_id: _link._id}, {$set: {image }}).catch(function(err){
+      if (!description || description.length == 0){ console.log('no description'); return; }
+      relatedLinks.update({_id: _link._id}, {$set: {description}}).catch(function(err){
         console.log('err', error);
       });
     });
   }
 })
 .then(function(){
-  console.log('Done');
-  db.close();
-  process.exit();
-  return;
-});
+    console.log('Done');
+    db.close();
+    process.exit();
+    return;
+  });
