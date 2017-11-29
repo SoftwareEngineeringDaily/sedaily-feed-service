@@ -31,7 +31,7 @@ relatedLinks.find({description: null}).then(function(links) {
   // console.log('links', links);
   for(var ii = 0; ii < links.length; ii++) {
     const link = links[ii];
-    
+
     getDescription(link,  function(error, description, _link) {
 
       if (error){ console.log('error', error); return; }
@@ -42,9 +42,3 @@ relatedLinks.find({description: null}).then(function(links) {
     });
   }
 })
-.then(function(){
-    console.log('Done');
-    db.close();
-    process.exit();
-    return;
-  });

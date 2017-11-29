@@ -50,9 +50,3 @@ relatedLinks.find({image: null}).then(function(links) {
     });
   }
 })
-.then(function(){
-  console.log('Done');
-  db.close();
-  process.exit();
-  return;
-});
