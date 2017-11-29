@@ -31,8 +31,7 @@ relatedLinks.find({description: null}).then(function(links) {
   // console.log('links', links);
   for(var ii = 0; ii < links.length; ii++) {
     const link = links[ii];
-    // TODO: stagger the fetching of images:
-
+    
     getDescription(link,  function(error, description, _link) {
 
       if (error){ console.log('error', error); return; }
