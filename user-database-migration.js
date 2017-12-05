@@ -37,7 +37,9 @@ users.find({})
           user.email = user.username;
           usernameToEmailTransfers++;
         } else {
-          console.log('Not an actual email as username but email is false?: ', user.username, user._id);
+          // This will happen if they signed up with the old website:
+          // or before we checked for valid emails:
+          console.log('Not an actual email as username but email is false: ', user.username, user._id, user.email);
           invalidUsernameAsEmails++;
         }
       }
@@ -56,5 +58,6 @@ users.find({})
     console.log('invalidUsernameAsEmails', invalidUsernameAsEmails);
     console.log('impossibleBlankUsernames', impossibleBlankUsernames);
     console.log('blankNames', blankNames);
+    console.log('Report END: -----------');
 
   })
