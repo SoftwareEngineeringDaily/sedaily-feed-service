@@ -9,6 +9,7 @@ const users = db.get('users')
 // ObjectId("59dfe18a7bb7f200285502df")
 // ObjectId("5a04c04c0634300028d840e1")
 
+// This is not working
 function validateEmail(email) {
   var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
