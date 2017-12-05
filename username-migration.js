@@ -36,7 +36,7 @@ users.find({})
     });
 
 
-    if(user.email == null){
+    if(user.email == null) {
       if(validateEmail(user.username) ) {
         user.email = user.username;
       } else {
