@@ -14,37 +14,47 @@ function validateEmail(email) {
   return re.test(email);
 }
 
-users.find({_id : ObjectId("5a04c04c0634300028d840e1")})
+users.find({})
   .then(function(users){
+    var usernameToEmailTransfers = 0;
+    var invalidUsernameAsEmails  = 0;
+    var impossibleBlankUsernames = 0;
+    var blankNames = 0;
+
+
     users.forEach((user) => {
 
-
-
-      if(!user.email){
-        user.email = validateEmail(user.username) ? user.username : 'NO_EMAIL_ADDRESS'
-      }
-
-      if(!user.username){
+      // This should not be possible....
+      if(user.username == null && user.email){
         user.username = user.email
-      }
+        console.log('This should not be possible.. username === null????------------');
+        impossibleBlankUsernames++;
+      } 
 
-      if(!user.name){
-        user.firstName = 'Software'
-        user.lastName = 'Engineer'
-      }
-      else {
-        const firstSpace = user.name.indexOf(' ')
-        if(firstSpace > -1){
-          user.firstName = user.name.split(' ', 2)[0]
-          user.lastName = user.name.substring(firstSpace, user.name.length)
-        }
-        else {
-          user.firstName = user.name
-          user.lastName = ' '
+
+      if(user.email == null){
+        if(validateEmail(user.username) ) {
+          user.email = user.username;
+          usernameToEmailTransfers++;
+        } else {
+          console.log('Not an actual email as username but email is false?: ', user.username, user._id);
+          invalidUsernameAsEmails++;
         }
       }
 
-      console.log(user)
 
-    })
+      if(user.name == null){
+        user.name  = 'Software Engineer'
+        blankNames++;
+      }
+
+      // console.log(user)
+
+    });
+    console.log('Report: -----------');
+    console.log('usernameToEmailTransfers', usernameToEmailTransfers);
+    console.log('invalidUsernameAsEmails', invalidUsernameAsEmails);
+    console.log('impossibleBlankUsernames', impossibleBlankUsernames);
+    console.log('blankNames', blankNames);
+
   })
