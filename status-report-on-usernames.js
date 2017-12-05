@@ -20,10 +20,28 @@ users.find({})
     var usernameToEmailTransfers = 0;
     var invalidUsernameAsEmails  = 0;
     var impossibleBlankUsernames = 0;
+    var usernameAsEmailsTrimmedCountNotMatching = 0;
+    var notTrimmedUsernames = 0;
+    var notTrimmedEmails = 0;
     var blankNames = 0;
 
 
     users.forEach((user) => {
+
+      if(user.username != null) {
+        if(user.username.length !== user.username.trim().length) {
+          // console.log(':: Untrimmed username', user.username);
+          notTrimmedUsernames++;
+        }
+      }
+
+      if(user.emails  != null) {
+        if(user.email.length !== user.email.trim().length) {
+          // console.log(':: Untrimmed email', user.email);
+          notTrimmedEmails++;
+        }
+      }
+
 
       // This should not be possible....
       if(user.username == null && user.email){
@@ -41,10 +59,14 @@ users.find({})
           // This will happen if they signed up with the old website:
           // or before we checked for valid emails:
           console.log('Not an actual email as username but email is false: ',  user.createdAt, '\t', user._id, '\t', user.username, '\t\t\t',  user.email);
+          if(user.username.indexOf('@') > 0) {
+            console.log('----!!!! Is probably an actual email but untrimmed?  raw username char count: ', user.username.length, 'after trim', user.username.trim().length);
+            usernameAsEmailsTrimmedCountNotMatching ++;
+          }
+
           invalidUsernameAsEmails++;
         }
       }
-
 
       if(user.name == null){
         user.name  = 'Software Engineer'
@@ -59,6 +81,9 @@ users.find({})
     console.log('invalidUsernameAsEmails', invalidUsernameAsEmails);
     console.log('impossibleBlankUsernames', impossibleBlankUsernames);
     console.log('blankNames', blankNames);
+    console.log('usernameAsEmailsTrimmedCountNotMatching', usernameAsEmailsTrimmedCountNotMatching);
+    console.log('notTrimmedUsernames', notTrimmedUsernames);
+    console.log('notTrimmedEmails', notTrimmedEmails);
     console.log('Report END: -----------');
 
   })
