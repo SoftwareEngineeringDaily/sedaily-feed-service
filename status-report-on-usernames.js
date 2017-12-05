@@ -39,7 +39,7 @@ users.find({})
         } else {
           // This will happen if they signed up with the old website:
           // or before we checked for valid emails:
-          console.log('Not an actual email as username but email is false: ', user.username, user._id, user.email);
+          console.log('Not an actual email as username but email is false: ',  user.createdAt, '\t', user._id, '\t', user.username, '\t\t\t',  user.email);
           invalidUsernameAsEmails++;
         }
       }
