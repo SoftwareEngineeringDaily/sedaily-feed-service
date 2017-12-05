@@ -26,22 +26,37 @@ users.find({})
     var blankNames = 0;
 
 
+    console.log('Untrimmed: -------------------------');
     users.forEach((user) => {
 
       if(user.username != null) {
         if(user.username.length !== user.username.trim().length) {
-          // console.log(':: Untrimmed username', user.username);
+           console.log(':: Untrimmed username', user.username);
           notTrimmedUsernames++;
         }
       }
 
       if(user.emails  != null) {
         if(user.email.length !== user.email.trim().length) {
-          // console.log(':: Untrimmed email', user.email);
+           console.log(':: Untrimmed email', user.email);
           notTrimmedEmails++;
         }
       }
+    });
 
+
+    console.log('Blank spaces inbetween: -------------------------');
+    users.forEach((user) => {
+
+      if(user.username != null) {
+        if(user.username.trim().indexOf(' ') > 0) {
+           console.log(':: Blank spaces inbtween  username', user.username);
+        }
+      }
+    });
+
+    console.log('Everything else: -------------------------');
+    users.forEach((user) => {
 
       // This should not be possible....
       if(user.username == null && user.email){
