@@ -23,6 +23,7 @@ users.find({})
     var usernameAsEmailsTrimmedCountNotMatching = 0;
     var notTrimmedUsernames = 0;
     var notTrimmedEmails = 0;
+    var blankSpaceInBetween = 0;
     var blankNames = 0;
 
 
@@ -44,13 +45,13 @@ users.find({})
       }
     });
 
-
     console.log('Blank spaces inbetween: -------------------------');
     users.forEach((user) => {
 
       if(user.username != null) {
         if(user.username.trim().indexOf(' ') > 0) {
-           console.log(':: Blank spaces inbtween  username', user.username);
+           console.log(':: Blank spaces inbetween username', user.username);
+           blankSpaceInBetween++;
         }
       }
     });
@@ -64,7 +65,6 @@ users.find({})
         console.log('This should not be possible.. username === null????------------');
         impossibleBlankUsernames++;
       } 
-
 
       if(user.email == null){
         if(validateEmail(user.username) ) {
@@ -99,6 +99,7 @@ users.find({})
     console.log('usernameAsEmailsTrimmedCountNotMatching', usernameAsEmailsTrimmedCountNotMatching);
     console.log('notTrimmedUsernames', notTrimmedUsernames);
     console.log('notTrimmedEmails', notTrimmedEmails);
+    console.log('blankSpaceInBetween', blankSpaceInBetween);
     console.log('Report END: -----------');
 
   })
