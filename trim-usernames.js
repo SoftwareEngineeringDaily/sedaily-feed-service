@@ -20,31 +20,19 @@ users.find({})
   console.log('Starting modification: -------------------------');
   users.forEach((user) => {
 
-    if(user.email == null) {
-      if(validateEmail(user.username) ) {
-        // user.email = user.username;
-        users.update({_id: user._id}, {$set: { email: user.username }})
+    if(user.username != null) {
+      if(user.username.length !== user.username.trim().length) {
+        console.log(':: Untrimmed username', user.username);
+        users.update({_id: user._id}, {$set: {username: user.username.trim() }})
         .then(function(){
-          console.log('success setting email = username', user.username);
+          console.log('success trimming username', user.username);
         })
         .catch(function(err){
           console.log('---ERROR ', error);
         });
-
-      } else {
-        // This will happen if they signed up with the old website:
-        // or before we checked for valid emails:
-        console.log('Not an actual email as username but email is false: ',  
-                    user.createdAt, '\t', user._id, '\t', user.username, '\t\t\t',  user.email);
-        if(user.username.indexOf('@') > 0) {
-          console.log('----!!!! Is probably an actual email but untrimmed?  raw username char count: ', 
-                      user.username.length, 'after trim', user.username.trim().length);
-          usernameAsEmailsTrimmedCountNotMatching ++;
-        }
-
       }
     }
-  })
+  });
 })
 .catch((error) => {
   console.log('Error: ----------------', error);

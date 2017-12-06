@@ -1,0 +1,5 @@
+First run trim-username.js
+Then can run username-migration.js & name-migration.js
+
+
+Also note status-report-on-username.js
