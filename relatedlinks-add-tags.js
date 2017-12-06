@@ -28,7 +28,6 @@ tags.find({})
     return tagMap
   })
   .then(function(tagMap){
-    console.log('TAGMAP', tagMap)
     // Get the related links
     relatedLinks.find({})
       .then(function (links) {
@@ -42,7 +41,9 @@ tags.find({})
                 // Add tag weights
                 post.tags.forEach(function(tag){
                   const tagName = tagMap[tag]
-                  weights[tagName] = 1
+                  if(tagName){
+                    weights[tagName] = 1
+                  }
                 })
 
                 // Add interests to db
