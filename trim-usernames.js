@@ -2,7 +2,7 @@ require('dotenv').config();
 var ObjectId = require('mongodb').ObjectID;
 const db = require('monk')(process.env.MONGO_DB);
 
-const users = db.get('users')
+const usersDB = db.get('users')
 
 // Good test user IDs:
 // ObjectId("597a06d7f0dc67003db0c4c0")
@@ -15,7 +15,7 @@ function validateEmail(email) {
   return re.test(email);
 }
 
-users.find({})
+usersDB.find({})
 .then(function(users){
   console.log('Starting modification: -------------------------');
   users.forEach((user) => {
@@ -23,7 +23,7 @@ users.find({})
     if(user.username != null) {
       if(user.username.length !== user.username.trim().length) {
         console.log(':: Untrimmed username', user.username);
-        users.update({_id: user._id}, {$set: {username: user.username.trim() }})
+        usersDB.update({_id: user._id}, {$set: {username: user.username.trim() }})
         .then(function(){
           console.log('success trimming username', user.username);
         })

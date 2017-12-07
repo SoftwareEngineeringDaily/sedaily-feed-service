@@ -2,7 +2,7 @@ require('dotenv').config();
 var ObjectId = require('mongodb').ObjectID;
 const db = require('monk')(process.env.MONGO_DB);
 
-const users = db.get('users')
+const usersDB = db.get('users')
 
 // Good test user IDs:
 // ObjectId("597a06d7f0dc67003db0c4c0")
@@ -15,15 +15,13 @@ function validateEmail(email) {
   return re.test(email);
 }
 
-users.find({})
+usersDB.find({})
 .then(function(users){
-
 
   console.log('Starting modification: -------------------------');
   users.forEach((user) => {
-
     if(user.name == null){
-        users.update({_id: user._id}, {$set: {name: 'Software Engineer'}})
+        usersDB.update({_id: user._id}, {$set: {name: 'Software Engineer'}})
         .then(function(){
           console.log('success setting name to Software Engineersetting , username = ', user.username);
         })
@@ -31,7 +29,6 @@ users.find({})
           console.log('---ERROR ', error);
         });
     }
-
   })
 })
 .catch((error) => {
