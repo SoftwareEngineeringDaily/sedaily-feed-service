@@ -22,6 +22,12 @@ for tag in db.tags.find():
 for story_id in hn.top_stories(limit=1000):
     item = hn.get_item(story_id)
     url = item.url
+
+    print url
+    # Check if link is already in database
+    if db.unrelatedlinks.find_one({'url' : item.url}) is not None:
+        continue
+
     try:
         response = requests.get(url)
     except:
@@ -53,7 +59,9 @@ for story_id in hn.top_stories(limit=1000):
     link = {
         "title" : item.title, 
         "url" : item.url,
-        "weights" : weights 
+        "weights" : weights, 
         "description" : description}
-        
+
+    print link
+
     db.unrelatedlinks.insert_one(link)
