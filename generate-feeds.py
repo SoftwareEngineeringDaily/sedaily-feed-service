@@ -15,11 +15,13 @@ for tag in db.tags.find():
     tags.append(tag["name"])
 
 for user in db.users.find():
-    pprint(user)
     if("interests" in user):
         users.append(user)
 
 for link in db.relatedlinks.find():
+    links.append(link)
+
+for link in db.unrelatedlinks.find():
     links.append(link)
 
 linkVectors = {}
@@ -53,8 +55,12 @@ for user in users:
     sortedLinkRatings = sorted(linkRatings, key=lambda k: k['distance'])
     sortedFeed = []
     for i in range(0, len(sortedLinkRatings)):
+        if (i > 100):
+            break
         linkId = sortedLinkRatings[i]["_id"]
         for link in db.relatedlinks.find({"_id" : linkId}):
+            sortedFeed.append(link)
+        for link in db.unrelatedlinks.find({"_id" : linkId}):
             sortedFeed.append(link)
         db.feeds.update({"user" : user["_id"]}, {
             '$set': {'feedItems' : sortedFeed}}, upsert=True)

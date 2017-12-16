@@ -32,6 +32,7 @@ const getImage = function(link,  cb) {
 
 
 const relatedLinks = db.get('relatedlinks');
+const unrelatedLinks = db.get('unrelatedlinks');
 
 relatedLinks.find({image: null}).then(function(links) {
   // console.log('links', links);
@@ -45,6 +46,24 @@ relatedLinks.find({image: null}).then(function(links) {
       if (!image || image.length == 0){ console.log('no image'); return; }
       console.log('got iamge!');
       relatedLinks.update({_id: _link._id}, {$set: {image }}).catch(function(err){
+        console.log('err', error);
+      });
+    });
+  }
+})
+
+unrelatedLinks.find({image: null}).then(function(links) {
+  // console.log('links', links);
+  for(var ii = 0; ii < links.length; ii++) {
+    const link = links[ii];
+    // TODO: stagger the fetching of images:
+
+    getImage(link,  function(error, image, _link) {
+
+      if (error){ console.log('error', error); return; }
+      if (!image || image.length == 0){ console.log('no image'); return; }
+      console.log('got iamge!');
+      unrelatedLinks.update({_id: _link._id}, {$set: {image }}).catch(function(err){
         console.log('err', error);
       });
     });

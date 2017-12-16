@@ -12,18 +12,20 @@ db = client['backup-11-19']
 hn = HackerNews()
 
 links = []
+tagMap = {}
 tagSet = set()
 
-# Make tag set
+# Make tag set and tag map
 for tag in db.tags.find():
     tagSet.add(tag["name"].lower())
+    # Make tag map to get back to correct casing
+    tagMap[tag["name"].lower()] = tag["name"]
 
 # Get new links
 for story_id in hn.top_stories(limit=1000):
     item = hn.get_item(story_id)
     url = item.url
 
-    print url
     # Check if link is already in database
     if db.unrelatedlinks.find_one({'url' : item.url}) is not None:
         continue
@@ -53,7 +55,8 @@ for story_id in hn.top_stories(limit=1000):
     # For each topic that is in the tagSet, add that as a weight
     weights = {}
     for tag in tagsInDescription:
-        weights[tag] = 1
+        correctCaseTag = tagMap[tag]
+        weights[correctCaseTag] = 1
 
     # Write the links to the unrelated links database
     link = {
