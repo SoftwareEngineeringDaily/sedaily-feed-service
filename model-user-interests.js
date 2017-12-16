@@ -40,7 +40,7 @@ tags.find({})
           // Get upvotes
           votes.find({$or : [{userId : user._id}, {userId : user._id.toString()}]})
             .then(function (votes) {
-
+              console.log(votes)
               // Get the posts associated with those upvotes
               votes.forEach(function(vote){
                 posts.findOne({_id : ObjectId(vote.postId)})

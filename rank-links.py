@@ -15,6 +15,7 @@ for tag in db.tags.find():
     tags.append(tag["name"])
 
 for user in db.users.find():
+    pprint(user)
     if("interests" in user):
         users.append(user)
 
@@ -55,6 +56,5 @@ for user in users:
         linkId = sortedLinkRatings[i]["_id"]
         for link in db.relatedlinks.find({"_id" : linkId}):
             sortedFeed.append(link)
-        pprint(sortedFeed)
         db.feeds.update({"user" : user["_id"]}, {
             '$set': {'feedItems' : sortedFeed}}, upsert=True)
