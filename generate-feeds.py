@@ -1,4 +1,7 @@
 import os
+import sys
+print('THIS IS THE SYSTEM-=================')
+print(sys.version)
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from scipy import spatial
@@ -8,7 +11,7 @@ from pprint import pprint
 client = MongoClient('localhost', 27017)
 db = client['backup-11-19']
 
-print os.environ['MONGO_DB']
+print(os.environ['MONGO_DB'])
 
 tags = []
 users = []
