@@ -15,6 +15,7 @@ based on the tags associated with the post of the related link.
 const relatedLinks = db.get('relatedlinks');
 const posts = db.get('posts')
 const tags = db.get('tags')
+const relatedLinksWeightsDB = db.get('relatedlinks.weights')
 
 // Get tags in memory
 tags.find({})
@@ -47,8 +48,7 @@ tags.find({})
                 })
 
                 // Add interests to db
-                relatedLinks.update({_id: link._id},
-                  { $set: { weights: weights }} )
+                relatedLinksWeightsDB.insert({linkId: link._id, weights: weights } )
               }
              })
            })
