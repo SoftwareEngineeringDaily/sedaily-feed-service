@@ -8,11 +8,12 @@ from bson.objectid import ObjectId
 from scipy import spatial
 # pprint library is used to make the output look more pretty
 from pprint import pprint
+print(os.environ['MONGO_DB'])
+
 # connect to MongoDB, change the << MONGODB URL >> to reflect your own connection string
 client = MongoClient('localhost', 27017)
 db = client['backup-11-19']
 
-print(os.environ['MONGO_DB'])
 
 tags = []
 users = []
