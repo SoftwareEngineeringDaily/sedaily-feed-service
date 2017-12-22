@@ -1,5 +1,6 @@
 import os
 import sys
+print "blas"
 print('THIS IS THE SYSTEM-=================')
 print(sys.version)
 from pymongo import MongoClient
