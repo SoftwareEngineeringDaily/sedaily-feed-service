@@ -8,7 +8,7 @@ db.then(() => {
 
 /*
 This script adds interests to the users database
-based on the posts the user upvoted
+based on the posts the user upvoted.
 */
 
 // Instantiate databases
