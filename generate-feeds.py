@@ -1,3 +1,4 @@
+import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from scipy import spatial
@@ -6,6 +7,8 @@ from pprint import pprint
 # connect to MongoDB, change the << MONGODB URL >> to reflect your own connection string
 client = MongoClient('localhost', 27017)
 db = client['backup-11-19']
+
+print os.environ['MONGO_DB']
 
 tags = []
 users = []
