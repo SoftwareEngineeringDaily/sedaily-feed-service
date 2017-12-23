@@ -14,6 +14,11 @@ envDB = os.environ['MONGO_DB_DATABASE']
 #TODO find out how to connect to localhost mongo client using MONGO_DB env var
 #because production and staging have weird URLs
 dbURL = 'mongodb://' + envHost + ':' + envPort
+
+print "DB URL AND ENV DB_--------------------------"
+print dbURL
+print envDB
+
 client = MongoClient(dbURL)
 db = client[envDB]
 
