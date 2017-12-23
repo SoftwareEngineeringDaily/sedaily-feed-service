@@ -6,10 +6,21 @@ from bs4 import BeautifulSoup
 
 # pprint library is used to make the output look more pretty
 from pprint import pprint
+envHost = os.environ['MONGO_DB_HOST']
+envPort = os.environ['MONGO_DB_PORT']
+envDB = os.environ['MONGO_DB_DATABASE']
 # connect to MongoDB, change the << MONGODB URL >> to reflect your own connection string
-client = MongoClient('localhost', 27017)
-db = client['backup-11-19']
-hn = HackerNews()
+
+#TODO find out how to connect to localhost mongo client using MONGO_DB env var
+#because production and staging have weird URLs
+dbURL = 'mongodb://jefftest:jefftest@ds243285.mlab.com:43285/heroku_hnh5z9qg'
+
+print "DB URL AND ENV DB_--------------------------"
+print dbURL
+print envDB
+
+client = MongoClient(dbURL)
+db = client.get_database()
 
 links = []
 tagMap = {}
