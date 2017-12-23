@@ -1,23 +1,21 @@
 import os
-import sys
-print "blas"
-print('THIS IS THE SYSTEM-=================')
-print(sys.version)
+import urllib
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from scipy import spatial
 # pprint library is used to make the output look more pretty
 from pprint import pprint
-print(os.environ['MONGO_DB_HOST'])
-print(os.environ['MONGO_DB_PORT'])
-print(os.environ['MONGO_DB_DATABASE'])
 
+envHost = os.environ['MONGO_DB_HOST']
+envPort = os.environ['MONGO_DB_PORT']
+envDB = os.environ['MONGO_DB_DATABASE']
 # connect to MongoDB, change the << MONGODB URL >> to reflect your own connection string
 
 #TODO find out how to connect to localhost mongo client using MONGO_DB env var
 #because production and staging have weird URLs
-client = MongoClient(os.environ['MONGO_DB_HOST'], int(os.environ['MONGO_DB_PORT']))
-db = client[os.environ['MONGO_DB_DATABASE']]
+dbURL = 'mongodb://' + envHost + ':' + envPort
+client = MongoClient(dbURL)
+db = client[envDB]
 
 tags = []
 users = []
@@ -74,5 +72,6 @@ for user in users:
             sortedFeed.append(link)
         for link in db.unrelatedlinks.find({"_id" : linkId}):
             sortedFeed.append(link)
+        print sortedFeed
         db.feeds.update({"user" : user["_id"]}, {
             '$set': {'feedItems' : sortedFeed}}, upsert=True)
