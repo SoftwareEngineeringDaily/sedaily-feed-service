@@ -16,12 +16,15 @@ const votes = db.get('votes')
 const posts = db.get('posts')
 const userDB = db.get('users')
 const tags = db.get('tags')
+const interestsDB = db.get('users.interests')
+console.log(interestsDB)
 
 // Get tags in memory
 tags.find({})
   .then(function(tags) {
     let tagMap = {}
     tags.forEach((tag) => {
+      // Tags with a . are hard to work with
       if(tag.name.indexOf('.') == -1){
         tagMap[tag.id] = tag.name
       }
@@ -40,7 +43,7 @@ tags.find({})
           // Get upvotes
           votes.find({$or : [{userId : user._id}, {userId : user._id.toString()}]})
             .then(function (votes) {
-
+              // TODO Filter downvotes
               // Get the posts associated with those upvotes
               votes.forEach(function(vote){
                 posts.findOne({_id : ObjectId(vote.postId)})
@@ -52,8 +55,8 @@ tags.find({})
                     })
 
                     // Add interests to db
-                    userDB.update({_id: user._id},
-                      { $set: {interests : interests }} )
+                    interestsDB.update({userId: user._id},{userId: user._id,
+                      interests : interests },{upsert : true})
                   })
               })
             })

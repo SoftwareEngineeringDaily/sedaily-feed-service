@@ -15,6 +15,7 @@ based on the tags associated with the post of the related link.
 const relatedLinks = db.get('relatedlinks');
 const posts = db.get('posts')
 const tags = db.get('tags')
+const relatedLinksWeightsDB = db.get('relatedlinks.weights')
 
 // Get tags in memory
 tags.find({})
@@ -28,7 +29,6 @@ tags.find({})
     return tagMap
   })
   .then(function(tagMap){
-    console.log('TAGMAP', tagMap)
     // Get the related links
     relatedLinks.find({})
       .then(function (links) {
@@ -42,12 +42,13 @@ tags.find({})
                 // Add tag weights
                 post.tags.forEach(function(tag){
                   const tagName = tagMap[tag]
-                  weights[tagName] = 1
+                  if(tagName){
+                    weights[tagName] = 1
+                  }
                 })
 
                 // Add interests to db
-                relatedLinks.update({_id: link._id},
-                  { $set: { weights: weights }} )
+                relatedLinksWeightsDB.update({linkId: link._id},{linkId: link._id, weights: weights }, {upsert: true} )
               }
              })
            })
