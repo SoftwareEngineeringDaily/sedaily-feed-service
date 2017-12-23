@@ -30,7 +30,9 @@ for tag in db.tags.find():
     tags.append(tag["name"])
 
 for user in db.users.find():
-    if("interests" in user):
+    userInterests = db.users.interests.find_one({"userId" : user["_id"]})
+    if(userInterests is not None):
+        user["interests"] = userInterests
         users.append(user)
 
 for link in db.relatedlinks.find():
@@ -44,6 +46,7 @@ userVectors = {}
 
 '''Make sparse tag array for each link'''
 for link in links:
+    print link
     linkTagSparseArray = [0] * len(tags)
     linkTags = link["weights"]
     for i in range(0, len(tags)):
@@ -52,6 +55,7 @@ for link in links:
 
 '''Make sparse tag array for each user'''
 for user in users:
+    print user
     userTagSparseArray = [0] * len(tags)
     userTags = user["interests"]
     for i in range(0, len(tags)):

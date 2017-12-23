@@ -48,7 +48,7 @@ tags.find({})
                 })
 
                 // Add interests to db
-                relatedLinksWeightsDB.insert({linkId: link._id, weights: weights } )
+                relatedLinksWeightsDB.update({linkId: link._id},{linkId: link._id, weights: weights }, {upsert: true} )
               }
              })
            })

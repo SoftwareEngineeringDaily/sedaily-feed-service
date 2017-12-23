@@ -55,8 +55,8 @@ tags.find({})
                     })
 
                     // Add interests to db
-                    interestsDB.insert({userId: user._id,
-                      interests : interests })
+                    interestsDB.update({userId: user._id},{userId: user._id,
+                      interests : interests },{upsert : true})
                   })
               })
             })

@@ -1,3 +1,4 @@
+import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from hackernews import HackerNews
@@ -9,6 +10,8 @@ from pprint import pprint
 envHost = os.environ['MONGO_DB_HOST']
 envPort = os.environ['MONGO_DB_PORT']
 envDB = os.environ['MONGO_DB_DATABASE']
+
+hn = HackerNews()
 # connect to MongoDB, change the << MONGODB URL >> to reflect your own connection string
 
 #TODO find out how to connect to localhost mongo client using MONGO_DB env var
