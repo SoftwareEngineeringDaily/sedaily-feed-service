@@ -13,14 +13,14 @@ envDB = os.environ['MONGO_DB_DATABASE']
 
 #TODO find out how to connect to localhost mongo client using MONGO_DB env var
 #because production and staging have weird URLs
-dbURL = 'mongodb://' + envHost + ':' + envPort
+dbURL = 'mongodb://jefftest:jefftest@ds243285.mlab.com:43285/heroku_hnh5z9qg'
 
 print "DB URL AND ENV DB_--------------------------"
 print dbURL
 print envDB
 
 client = MongoClient(dbURL)
-db = client[envDB]
+db = client.get_database()
 
 tags = []
 users = []
