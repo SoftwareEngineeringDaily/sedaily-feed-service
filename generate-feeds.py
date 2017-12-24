@@ -9,18 +9,17 @@ from pprint import pprint
 envHost = os.environ['MONGO_DB_HOST']
 envPort = os.environ['MONGO_DB_PORT']
 envDB = os.environ['MONGO_DB_DATABASE']
-# connect to MongoDB, change the << MONGODB URL >> to reflect your own connection string
 
 #TODO find out how to connect to localhost mongo client using MONGO_DB env var
 #because production and staging have weird URLs
-dbURL = 'mongodb://jefftest:jefftest@ds243285.mlab.com:43285/heroku_hnh5z9qg'
+dbURL = 'mongodb://' + envHost + ':' + envPort + '/' + envDB
 
-print "DB URL AND ENV DB_--------------------------"
-print dbURL
-print envDB
+print "CONNECTING TO " + dbURL
 
 client = MongoClient(dbURL)
 db = client.get_database()
+
+print "CONNECTED TO " + dbURL
 
 tags = []
 users = []
@@ -46,7 +45,6 @@ userVectors = {}
 
 '''Make sparse tag array for each link'''
 for link in links:
-    print link
     linkTagSparseArray = [0] * len(tags)
     linkTags = link["weights"]
     for i in range(0, len(tags)):
@@ -55,7 +53,6 @@ for link in links:
 
 '''Make sparse tag array for each user'''
 for user in users:
-    print user
     userTagSparseArray = [0] * len(tags)
     userTags = user["interests"]
     for i in range(0, len(tags)):
@@ -81,6 +78,6 @@ for user in users:
             sortedFeed.append(link)
         for link in db.unrelatedlinks.find({"_id" : linkId}):
             sortedFeed.append(link)
-        print sortedFeed
-        db.feeds.update({"user" : user["_id"]}, {
-            '$set': {'feedItems' : sortedFeed}}, upsert=True)
+    sortedFeed.sort(key=lambda item:item['dateCreated'], reverse=True)
+    db.feeds.update({"user" : user["_id"]}, {
+        '$set': {'feedItems' : sortedFeed}}, upsert=True)

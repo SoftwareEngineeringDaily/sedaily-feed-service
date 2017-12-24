@@ -1,29 +1,28 @@
+import requests
+import datetime
 import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from hackernews import HackerNews
-import requests
 from bs4 import BeautifulSoup
-
-# pprint library is used to make the output look more pretty
 from pprint import pprint
+
 envHost = os.environ['MONGO_DB_HOST']
 envPort = os.environ['MONGO_DB_PORT']
 envDB = os.environ['MONGO_DB_DATABASE']
 
 hn = HackerNews()
-# connect to MongoDB, change the << MONGODB URL >> to reflect your own connection string
 
 #TODO find out how to connect to localhost mongo client using MONGO_DB env var
 #because production and staging have weird URLs
-dbURL = 'mongodb://jefftest:jefftest@ds243285.mlab.com:43285/heroku_hnh5z9qg'
+dbURL = 'mongodb://' + envHost + ':' + envPort + '/' + envDB
 
-print "DB URL AND ENV DB_--------------------------"
-print dbURL
-print envDB
+print "CONNECTING TO " + dbURL
 
 client = MongoClient(dbURL)
 db = client.get_database()
+
+print "CONNECTED TO " + dbURL
 
 links = []
 tagMap = {}
@@ -39,6 +38,7 @@ for tag in db.tags.find():
 for story_id in hn.top_stories(limit=1000):
     item = hn.get_item(story_id)
     url = item.url
+    print item
 
     # Check if link is already in database
     if db.unrelatedlinks.find_one({'url' : item.url}) is not None:
@@ -77,7 +77,9 @@ for story_id in hn.top_stories(limit=1000):
         "title" : item.title, 
         "url" : item.url,
         "weights" : weights, 
-        "description" : description}
+        "description" : description,
+        "dateCreated" : datetime.datetime.now()
+        }
 
     print link
 
