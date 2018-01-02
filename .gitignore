@@ -53,3 +53,6 @@ node_modules
 # VIM
 *.swp
 *.swo
+
+# API Keys
+.secrets
