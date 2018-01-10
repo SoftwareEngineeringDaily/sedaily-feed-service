@@ -1,3 +1,5 @@
+// Script to add descriptions to links that do not have one
+
 require('dotenv').config();
 const  MetaInspector  = require('meta-scrape');
 const db = require('monk')(process.env.MONGO_DB);
@@ -26,6 +28,7 @@ const getDescription = function(link,  cb) {
 
 
 const relatedLinks = db.get('relatedlinks');
+const unrelatedLinks = db.get('unrelatedlinks');
 
 relatedLinks.find({description: null}).then(function(links) {
   // console.log('links', links);
@@ -37,6 +40,22 @@ relatedLinks.find({description: null}).then(function(links) {
       if (error){ console.log('error', error); return; }
       if (!description || description.length == 0){ console.log('no description'); return; }
       relatedLinks.update({_id: _link._id}, {$set: {description}}).catch(function(err){
+        console.log('err', error);
+      });
+    });
+  }
+})
+
+unrelatedLinks.find({description: null}).then(function(links) {
+  // console.log('links', links);
+  for(var ii = 0; ii < links.length; ii++) {
+    const link = links[ii];
+
+    getDescription(link,  function(error, description, _link) {
+
+      if (error){ console.log('error', error); return; }
+      if (!description || description.length == 0){ console.log('no description'); return; }
+      unrelatedLinks.update({_id: _link._id}, {$set: {description}}).catch(function(err){
         console.log('err', error);
       });
     });

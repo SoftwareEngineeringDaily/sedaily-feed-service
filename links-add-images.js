@@ -1,3 +1,5 @@
+// Script to add images to links that do not have one
+
 require('dotenv').config();
 const  MetaInspector  = require('meta-scrape');
 const db = require('monk')(process.env.MONGO_DB);

@@ -1,7 +1,6 @@
 from pymongo import MongoClient
 import diffbot
 from hackernews import HackerNews
-import datetime
 import os
 
 envHost = os.environ['MONGO_DB_HOST']
@@ -17,7 +16,7 @@ diffbot_client = diffbot.Client(token=diffbot_token)
 links = []
 
 # Get new links
-for story_id in hn.top_stories(limit=50):
+for story_id in hn.top_stories(limit=1000):
     item = hn.get_item(story_id)
     url = item.url
     # Check if link is already in database
@@ -26,15 +25,16 @@ for story_id in hn.top_stories(limit=50):
     try:
         result = diffbot_client.api('article', url)
         title = result["objects"][0]["title"]
-        description = result["objects"][0]["title"]
         text = result["objects"][0]["text"]
-        date = str(datetime.datetime.now())
-        image = result["objects"][0]["images"][0]["url"]
+        date = result["objects"][0]["date"]
         tags = []
-        for obj in result["objects"][0]["tags"]:
-            tags.append(obj["label"])
-        link = {"title":title,"description":description,"text":text, "date":date,"tags":tags, "url":url, "image":image}
-        print link
+        try:
+            for obj in result["objects"][0]["tags"]:
+                tags.append(obj["label"])
+        except:
+            continue
+        link = {"title":title,"text":text, "date":date,"tags":tags, "url":url}
         db.unrelatedlinks.insert(link)
+        print(link)
     except:
         continue
