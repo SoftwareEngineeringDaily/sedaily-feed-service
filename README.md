@@ -12,3 +12,23 @@ npm install
 cp .env.example .env
 
 Run each script in the order listed above.
+
+
+
+
+
+# Installation of Python
+
+pip install -r ./requirements.txt
+
+
+
+# Notes
+
+python --version
+
+If using conda / multiple python versions
+
+
+
+python2.7 -m pip install -r ./requirements.txt

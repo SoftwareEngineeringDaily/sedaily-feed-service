@@ -1,6 +1,7 @@
 // Script to add images to links that do not have one
 
 require('dotenv').config();
+let Promise = require('bluebird');
 const  MetaInspector  = require('meta-scrape');
 const db = require('monk')(process.env.MONGO_DB);
 db.then(() => {
@@ -8,66 +9,83 @@ db.then(() => {
 })
 
 
-const getImage = function(link,  cb) {
+// Refacor:
+//
 
-  var client = new MetaInspector(link.url, {});
-  client.on("fetch", function(){
-    let image = client.image;
-    if (!image || image.length == 0) {
-      if (client.images && client.images.length > 0) {
-        image = client.images[0];
-      } else {
-        return cb('No image');
+const getImage = function(link) {
+  const p = new Promise(function(resolve, reject){
+    var client = new MetaInspector(link.url, {});
+    client.on("fetch", function(){
+      let image = client.image;
+      if (!image || image.length == 0) {
+        if (client.images && client.images.length > 0) {
+          image = client.images[0];
+        } else {
+          return reject('No image found');
+        }
       }
-    }
-    cb(null, image, link);
+      resolve({image, link});
+    });
+
+    client.on("error", function(error){
+      return reject(error);
+    });
+
+    client.fetch();
+    console.log('Trying to fetch...', link.url);
   });
-
-  client.on("error", function(err){
-    cb(err);
-  });
-
-  client.fetch();
-
-  console.log('Trying to fetch...', link.url);
+  return p;
 }
 
 
 const relatedLinks = db.get('relatedlinks');
 const unrelatedLinks = db.get('unrelatedlinks');
 
-relatedLinks.find({image: null}).then(function(links) {
-  // console.log('links', links);
+const createLinkPromises = function(links) {
+  let promises = [];
   for(var ii = 0; ii < links.length; ii++) {
     const link = links[ii];
     // TODO: stagger the fetching of images:
 
-    getImage(link,  function(error, image, _link) {
-
-      if (error){ console.log('error', error); return; }
-      if (!image || image.length == 0){ console.log('no image'); return; }
-      console.log('got iamge!');
-      relatedLinks.update({_id: _link._id}, {$set: {image }}).catch(function(err){
-        console.log('err', error);
-      });
+    const p = getImage(link)
+    .then(function({image, link})  {
+      return unrelatedLinks.update({_id: link._id}, {$set: {image }})
+    })
+    .catch(function(error){
+      console.log('err', error);
     });
+    promises.push(p);
   }
+  return promises;
+}
+
+
+// This will get us a link array for each:
+const getRelatedLinkPromise = relatedLinks.find({image: null});
+const getUnrelatedLinksPromise = unrelatedLinks.find({image: null});
+
+Promise.all([getRelatedLinkPromise, getUnrelatedLinksPromise ])
+.then( (linkArrays) => {
+
+  // Let's Merge our arrays
+  links = [];
+  for(var ii = 0; ii < linkArrays.length; ii++) {
+    links = links.concat(linkArrays[ii]);
+  }
+
+  return Promise.all(createLinkPromises(links));
+})
+.then((results) => {
+  console.log('Done :)-----------');
+})
+.catch((error) => {
+  console.log('all done?--- Error', error)
+})
+.finally(()=> {
+  console.log('Finally');
+  process.exit();
 })
 
-unrelatedLinks.find({image: null}).then(function(links) {
-  // console.log('links', links);
-  for(var ii = 0; ii < links.length; ii++) {
-    const link = links[ii];
-    // TODO: stagger the fetching of images:
-
-    getImage(link,  function(error, image, _link) {
-
-      if (error){ console.log('error', error); return; }
-      if (!image || image.length == 0){ console.log('no image'); return; }
-      console.log('got iamge!');
-      unrelatedLinks.update({_id: _link._id}, {$set: {image }}).catch(function(err){
-        console.log('err', error);
-      });
-    });
-  }
-})
+// Refactor this code
+// Ideas --> get another image scraping library
+// Get a library to grab all img tags and just pull the firs tone
