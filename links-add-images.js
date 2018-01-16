@@ -9,22 +9,17 @@ db.then(() => {
 })
 
 
-// Refacor:
-//
-
 const getImage = function(link) {
   const p = new Promise(function(resolve, reject){
     var client = new MetaInspector(link.url, {});
     client.on("fetch", function(){
       let image = client.image;
       if (!image || image.length == 0) {
-        if (client.images && client.images.length > 0) {
-          image = client.images[0];
-        } else {
-          return reject('No image found');
-        }
+        reject('No image found');
+      } else {
+        console.log('Found an image:**********', image);
+        resolve({image, link});
       }
-      resolve({image, link});
     });
 
     client.on("error", function(error){
