@@ -1,5 +1,4 @@
 // Script to add images to links that do not have one
-
 require('dotenv').config();
 let Promise = require('bluebird');
 const  MetaInspector  = require('meta-scrape');
@@ -8,6 +7,22 @@ db.then(() => {
   console.log('Connected correctly to server')
 })
 
+const getImage2 = function(link) {
+  const jsdom = require("jsdom");
+  const { JSDOM } = jsdom;
+  // const dom = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`);
+  // console.log(dom.window.document.querySelector("p").textContent); // "Hello world"
+
+
+  JSDOM.fromURL(link, {})
+  .then(dom => {
+    console.log(dom.window.document.querySelector("img").textContent); // "Hello world"
+  })
+  .catch(error => {
+    console.log('error', error)
+  })
+
+}
 
 const getImage = function(link) {
   const p = new Promise(function(resolve, reject){
@@ -32,7 +47,6 @@ const getImage = function(link) {
   return p;
 }
 
-
 const relatedLinks = db.get('relatedlinks');
 const unrelatedLinks = db.get('unrelatedlinks');
 
@@ -53,7 +67,6 @@ const createLinkPromises = function(links) {
   }
   return promises;
 }
-
 
 // This will get us a link array for each:
 const getRelatedLinkPromise = relatedLinks.find({image: null});
