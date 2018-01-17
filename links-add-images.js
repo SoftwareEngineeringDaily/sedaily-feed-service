@@ -3,6 +3,10 @@
 const cheerio = require('cheerio');
 const htmlToJson  = require('html-to-json');
 
+var Diffbot = require('./diffbot').Diffbot
+var diffbot = new Diffbot('ccaea83a6ab30fcd64dc8579613edba3'); // your API key here
+
+
 require('dotenv').config();
 let Promise = require('bluebird');
 const  MetaInspector  = require('meta-scrape');
@@ -22,20 +26,65 @@ const getImage2 = function(link) {
   console.log('link.url', url);
   if (url && url.indexOf('http') == 0 ) {
   } else {
-    url  =  'http://' + url;
-    console.log('link.url', url);
+    // url  =  'http://' + url;
+    // console.log('link.url', url);
   }
-  var promise = htmlToJson.request(url, {
-    'images': ['img', function ($img) {
-      return $img.attr('src');
-    }]
-  }, function (err, result) {
-    if(err) {
-      console.log('errrrrr........', err);
-    } else {
-    console.log('url', url, 'result',  result);
-    }
+  // var promise = htmlToJson.request(url, {
+  //   'images': ['img', function ($img) {
+  //     return $img.attr('src');
+  //   }]
+  // }, function (err, result) {
+  //   if(err) {
+  //     console.log('errrrrr........', err);
+  //   } else {
+  //   console.log('url', url, 'result',  result);
+  //   }
+  // });
+  //
+  //
+
+
+  // regular function
+  /*
+  diffbot.article({uri: url}, function(err, response) {
+    console.log('Url:', url);
+    console.log(response.title);
+    console.log(response.text);
+    if (response.media)
+    console.log(JSON.stringify(response.media));
   });
+
+  */
+
+  // regular function
+  /*
+  diffbot.image({uri: url}, function(err, response) {
+    console.log('Url:', url);
+    // console.log(response.title);
+    console.log('response',response);
+    console.log('----------------------');
+    if (response.media)
+    console.log(JSON.stringify(response.media));
+  });
+  */
+     client.article.get({
+            url
+        }, function onSuccess(response) {
+            // output the title
+            console.log('diff bot response: ', response)
+        }, function onError(response) {
+              switch(response.errorCode) {
+                case 401:
+                    alert(response.error)
+                    break;
+                case 404:
+                    alert(response.error)
+                    break;
+                case 500:
+                    alert(response.error)
+                    break;
+              }
+        });
 
 
 }
