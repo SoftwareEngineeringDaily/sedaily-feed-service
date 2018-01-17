@@ -1,8 +1,6 @@
-scipy==0.13.0
 beautifulsoup4==4.6.0
 HackerNews==2.0.0
 haxor==0.6
-numpy==1.8.0
 pymongo==3.5.1
 python-dateutil==1.5
 requests==2.18.4

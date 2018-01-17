@@ -1,4 +1,8 @@
 // Script to add images to links that do not have one
+
+const cheerio = require('cheerio');
+const htmlToJson  = require('html-to-json');
+
 require('dotenv').config();
 let Promise = require('bluebird');
 const  MetaInspector  = require('meta-scrape');
@@ -8,19 +12,30 @@ db.then(() => {
 })
 
 const getImage2 = function(link) {
-  const jsdom = require("jsdom");
-  const { JSDOM } = jsdom;
-  // const dom = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`);
-  // console.log(dom.window.document.querySelector("p").textContent); // "Hello world"
 
+  const $ = cheerio.load('<ul id="fruits"><img src="blah.png" /></ul>');
 
-  JSDOM.fromURL(link, {})
-  .then(dom => {
-    console.log(dom.window.document.querySelector("img").textContent); // "Hello world"
-  })
-  .catch(error => {
-    console.log('error', error)
-  })
+  const src = $('img').attr('src')
+  console.log('src img', src);
+
+  let url = link.url;
+  console.log('link.url', url);
+  if (url && url.indexOf('http') == 0 ) {
+  } else {
+    url  =  'http://' + url;
+    console.log('link.url', url);
+  }
+  var promise = htmlToJson.request(url, {
+    'images': ['img', function ($img) {
+      return $img.attr('src');
+    }]
+  }, function (err, result) {
+    if(err) {
+      console.log('errrrrr........', err);
+    } else {
+    console.log('result', result);
+    }
+  });
 
 }
 
@@ -30,7 +45,9 @@ const getImage = function(link) {
     client.on("fetch", function(){
       let image = client.image;
       if (!image || image.length == 0) {
-        reject('No image found');
+        return getImage2(link);
+        // return reject({error:'No image found', link});
+
       } else {
         console.log('Found an image:**********', image);
         resolve({image, link});
@@ -38,7 +55,8 @@ const getImage = function(link) {
     });
 
     client.on("error", function(error){
-      return reject(error);
+      return getImage2(link);
+      // return reject({error, link});
     });
 
     client.fetch();
@@ -60,8 +78,9 @@ const createLinkPromises = function(links) {
     .then(function({image, link})  {
       return unrelatedLinks.update({_id: link._id}, {$set: {image }})
     })
-    .catch(function(error){
-      console.log('err', error);
+    .catch(function({error, link}){
+      console.log('::::::::::::err', error);
+      // getImage2(link);
     });
     promises.push(p);
   }
@@ -91,7 +110,7 @@ Promise.all([getRelatedLinkPromise, getUnrelatedLinksPromise ])
 })
 .finally(()=> {
   console.log('Finally');
-  process.exit();
+  // process.exit();
 })
 
 // Refactor this code

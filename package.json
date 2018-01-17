@@ -10,7 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.5.1",
+    "cheerio": "^1.0.0-rc.2",
     "dotenv": "^4.0.0",
+    "html-to-json": "^0.6.0",
+    "jsdom": "^11.5.1",
     "meta-scrape": "0.0.4",
     "monk": "^6.0.5"
   }
