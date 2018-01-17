@@ -33,9 +33,10 @@ const getImage2 = function(link) {
     if(err) {
       console.log('errrrrr........', err);
     } else {
-    console.log('result', result);
+    console.log('url', url, 'result',  result);
     }
   });
+
 
 }
 
