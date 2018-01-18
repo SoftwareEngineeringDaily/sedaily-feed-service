@@ -2,9 +2,10 @@
 
 const cheerio = require('cheerio');
 const htmlToJson  = require('html-to-json');
+const _ = require('lodash');
 
-var Diffbot = require('./diffbot').Diffbot
-var diffbot = new Diffbot('ccaea83a6ab30fcd64dc8579613edba3'); // your API key here
+const axios = require('axios');
+var diffbotToken = 'ccaea83a6ab30fcd64dc8579613edba3';
 
 
 require('dotenv').config();
@@ -17,78 +18,41 @@ db.then(() => {
 
 const getImage2 = function(link) {
 
-  const $ = cheerio.load('<ul id="fruits"><img src="blah.png" /></ul>');
+  const p = new Promise(function(resolve, reject){
+    let url = link.url;
+    console.log('link.url', url);
+    if (url && url.indexOf('http') == 0 ) {
+    } else {
+      url  =  'http://' + url;
+      console.log('modified url', url);
+    }
 
-  const src = $('img').attr('src')
-  console.log('src img', src);
+    // Regular function
+    var options = {
+      params: {'token': diffbotToken, url}
+    };
 
-  let url = link.url;
-  console.log('link.url', url);
-  if (url && url.indexOf('http') == 0 ) {
-  } else {
-    // url  =  'http://' + url;
-    // console.log('link.url', url);
-  }
-  // var promise = htmlToJson.request(url, {
-  //   'images': ['img', function ($img) {
-  //     return $img.attr('src');
-  //   }]
-  // }, function (err, result) {
-  //   if(err) {
-  //     console.log('errrrrr........', err);
-  //   } else {
-  //   console.log('url', url, 'result',  result);
-  //   }
-  // });
-  //
-  //
+    axios.get('https://api.diffbot.com/v3/image', options)
+    .then(({data}) => {
+      _.each(data.objects, (obj ) {
+        if(obj.type === 'image') {
 
-
-  // regular function
-  /*
-  diffbot.article({uri: url}, function(err, response) {
-    console.log('Url:', url);
-    console.log(response.title);
-    console.log(response.text);
-    if (response.media)
-    console.log(JSON.stringify(response.media));
+          console.log('Found an image:**********', image);
+          return resolve(obj.url);
+        }
+      });
+      reject('No image found')
+    })
+    .catch((error)=> {
+      console.log('diffbot error-----------', error);
+      return reject(error);
+    })
   });
-
-  */
-
-  // regular function
-  /*
-  diffbot.image({uri: url}, function(err, response) {
-    console.log('Url:', url);
-    // console.log(response.title);
-    console.log('response',response);
-    console.log('----------------------');
-    if (response.media)
-    console.log(JSON.stringify(response.media));
-  });
-  */
-     client.article.get({
-            url
-        }, function onSuccess(response) {
-            // output the title
-            console.log('diff bot response: ', response)
-        }, function onError(response) {
-              switch(response.errorCode) {
-                case 401:
-                    alert(response.error)
-                    break;
-                case 404:
-                    alert(response.error)
-                    break;
-                case 500:
-                    alert(response.error)
-                    break;
-              }
-        });
-
-
+  return p;
 }
 
+
+// Deprecrated
 const getImage = function(link) {
   const p = new Promise(function(resolve, reject){
     var client = new MetaInspector(link.url, {});
@@ -126,7 +90,7 @@ const createLinkPromises = function(links) {
 
     const p = getImage(link)
     .then(function({image, link})  {
-      return unrelatedLinks.update({_id: link._id}, {$set: {image }})
+      return unrelatedLinks.update({_id: link._id}, {$set: {image}})
     })
     .catch(function({error, link}){
       console.log('::::::::::::err', error);
