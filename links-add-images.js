@@ -82,7 +82,7 @@ const getImage = function(link) {
 const relatedLinks = db.get('relatedlinks');
 const unrelatedLinks = db.get('unrelatedlinks');
 
-const createLinkPromises = function(links) {
+const createLinkPromises = function(links, dbTable) {
   let promises = [];
   for(var ii = 0; ii < links.length; ii++) {
     const link = links[ii];
@@ -92,7 +92,13 @@ const createLinkPromises = function(links) {
     .then(function({image, link})  {
       console.log('Found an image:**********', image, 'link: ', link.url, link._id);
 
-      return unrelatedLinks.update({_id: link._id}, {$set: {image}})
+      return dbTable.update({_id: link._id}, {$set: {image}})
+      .then((result) => {
+        console.log('success inserting into db')
+      })
+      .catch((error) => {
+        console.log('error updating link', error)
+      })
     })
     .catch(function({error, link}){
       console.log('::::::::::::err', error);
@@ -106,28 +112,28 @@ const createLinkPromises = function(links) {
 // This will get us a link array for each:
 const getRelatedLinkPromise = relatedLinks.find({image: null});
 const getUnrelatedLinksPromise = unrelatedLinks.find({image: null});
+const dbTables = [relatedLinks, unrelatedLinks];
 
-Promise.all([getRelatedLinkPromise, getUnrelatedLinksPromise ])
-.then( (linkArrays) => {
-
-  // Let's Merge our arrays
-  links = [];
-  for(var ii = 0; ii < linkArrays.length; ii++) {
-    links = links.concat(linkArrays[ii]);
-  }
-
-  return Promise.all(createLinkPromises(links));
-})
-.then((results) => {
-  console.log('Done :)-----------');
-})
-.catch((error) => {
-  console.log('all done?--- Error', error)
+// TODO: refactor this:
+Promise.all([getRelatedLinkPromise])
+.then( (links) => {
+   return Promise.all(createLinkPromises(links[0], relatedLinks));
 })
 .finally(()=> {
-  console.log('Finally');
-  process.exit();
+  console.log('Finally, unrelated links done');
+});
+
+
+Promise.all([getRelatedLinkPromise])
+.then( (links) => {
+   return Promise.all(createLinkPromises(links[0], unrelatedLinks));
 })
+.finally(()=> {
+  console.log('Finally, related links done');
+});
+
+
+
 
 // Refactor this code
 // Ideas --> get another image scraping library
