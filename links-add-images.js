@@ -5,10 +5,11 @@ const htmlToJson  = require('html-to-json');
 const _ = require('lodash');
 
 const axios = require('axios');
-var diffbotToken = 'ccaea83a6ab30fcd64dc8579613edba3';
-
-
 require('dotenv').config();
+var diffbotToken =   process.env.DIFFBOT_TOKEN;
+
+
+
 let Promise = require('bluebird');
 const  MetaInspector  = require('meta-scrape');
 const db = require('monk')(process.env.MONGO_DB);
