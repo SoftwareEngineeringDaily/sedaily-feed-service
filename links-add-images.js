@@ -16,7 +16,7 @@ db.then(() => {
   console.log('Connected correctly to server')
 })
 
-const getImage2 = function(link) {
+const getImage = function(link) {
 
   const p = new Promise(function(resolve, reject){
     let url = link.url;
@@ -34,18 +34,16 @@ const getImage2 = function(link) {
 
     axios.get('https://api.diffbot.com/v3/image', options)
     .then(({data}) => {
-      _.each(data.objects, (obj ) {
+      _.each(data.objects, (obj) => {
         if(obj.type === 'image') {
-
-          console.log('Found an image:**********', image);
-          return resolve(obj.url);
+          return resolve({image: obj.url, link});
         }
       });
-      reject('No image found')
+      return reject('No image found')
     })
     .catch((error)=> {
       console.log('diffbot error-----------', error);
-      return reject(error);
+      return reject({error, link});
     })
   });
   return p;
@@ -53,6 +51,7 @@ const getImage2 = function(link) {
 
 
 // Deprecrated
+/*
 const getImage = function(link) {
   const p = new Promise(function(resolve, reject){
     var client = new MetaInspector(link.url, {});
@@ -78,6 +77,7 @@ const getImage = function(link) {
   });
   return p;
 }
+*/
 
 const relatedLinks = db.get('relatedlinks');
 const unrelatedLinks = db.get('unrelatedlinks');
@@ -90,6 +90,8 @@ const createLinkPromises = function(links) {
 
     const p = getImage(link)
     .then(function({image, link})  {
+      console.log('Found an image:**********', image, 'link: ', link.url, link._id);
+
       return unrelatedLinks.update({_id: link._id}, {$set: {image}})
     })
     .catch(function({error, link}){
@@ -124,7 +126,7 @@ Promise.all([getRelatedLinkPromise, getUnrelatedLinksPromise ])
 })
 .finally(()=> {
   console.log('Finally');
-  // process.exit();
+  process.exit();
 })
 
 // Refactor this code
