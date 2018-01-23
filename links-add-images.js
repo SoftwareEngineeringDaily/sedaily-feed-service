@@ -1,7 +1,5 @@
 // Script to add images to links that do not have one
 
-const cheerio = require('cheerio');
-const htmlToJson  = require('html-to-json');
 const _ = require('lodash');
 
 const axios = require('axios');
@@ -40,10 +38,12 @@ const getImage = function(link) {
           return resolve({image: obj.url, link});
         }
       });
-      return reject('No image found')
+      console.log(data);
+      return reject({error: 'No image found', objects: data.objects })
     })
-    .catch((error)=> {
+    .catch(({error, objects})=> {
       console.log('diffbot error-----------', error);
+      console.log('diffbot error objects-----------', objects);
       return reject({error, link});
     })
   });
@@ -101,7 +101,7 @@ const createLinkPromises = function(links, dbTable) {
         console.log('error updating link', error)
       })
     })
-    .catch(function({error, link}){
+    .catch(function(error){
       console.log('::::::::::::err', error);
       // getImage2(link);
     });
