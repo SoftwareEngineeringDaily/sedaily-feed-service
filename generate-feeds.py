@@ -3,10 +3,12 @@ from pymongo import MongoClient
 from pprint import pprint
 import random
 
-envHost = os.environ['MONGO_DB_HOST']
-envPort = os.environ['MONGO_DB_PORT']
-envDB = os.environ['MONGO_DB_DATABASE']
-dbURL = 'mongodb://' + envHost + ':' + envPort + '/' + envDB
+# envHost = os.environ['MONGO_DB_HOST']
+# envPort = os.environ['MONGO_DB_PORT']
+# envDB = os.environ['MONGO_DB_DATABASE']
+mongoDB = os.environ['MONGO_DB']
+# dbURL = 'mongodb://' + envHost + ':' + envPort + '/' + envDB
+dbURL = 'mongodb://' + mongoDB
 client = MongoClient(dbURL)
 db = client.get_database()
 
