@@ -9,7 +9,7 @@ require('dotenv').config();
 var diffbotToken =   process.env.DIFFBOT_TOKEN;
 
 
-let Promise = require('bluebird');
+let Bluebird = require('bluebird');
 const  MetaInspector  = require('meta-scrape');
 const db = require('monk')(process.env.MONGO_DB);
 db.then(() => {
@@ -103,87 +103,28 @@ const getImage = function(link) {
 }
 
 
-/*
-const getImage = function(link) {
 
-  const p = new Promise(function(resolve, reject){
-    let url = link.url;
-    console.log('link.url', url);
-    if (url && url.indexOf('http') == 0 ) {
-    } else {
-      url  =  'http://' + url;
-      console.log('modified url', url);
-    }
-
-    // Regular function
-    var options = {
-      params: {'token': diffbotToken, url}
-    };
-
-    axios.get('https://api.diffbot.com/v3/image', options)
-    .then(({data}) => {
-      _.each(data.objects, (obj) => {
-        if(obj.type === 'image') {
-          return resolve({image: obj.url, link});
-        }
-      });
-      return reject({error: 'No image found',  url , objects: data.objects })
-    })
-    .catch(({error,  objects})=> {
-      console.log( 'diffbot error-----------', error);
-      console.log('diffbot error objects-----------', objects);
-      return reject({error, link});
-    })
-  });
-  return p;
-}
-
-*/
-
-
-// Deprecrated
-/*
-const getImage = function(link) {
-  const p = new Promise(function(resolve, reject){
-    var client = new MetaInspector(link.url, {});
-    client.on("fetch", function(){
-      let image = client.image;
-      if (!image || image.length == 0) {
-        return getImage2(link);
-        // return reject({error:'No image found', link});
-
-      } else {
-        console.log('Found an image:**********', image);
-        resolve({image, link});
-      }
-    });
-
-    client.on("error", function(error){
-      return getImage2(link);
-      // return reject({error, link});
-    });
-
-    client.fetch();
-    console.log('Trying to fetch...', link.url);
-  });
-  return p;
-}
-*/
 
 const relatedLinks = db.get('relatedlinks');
 const unrelatedLinks = db.get('unrelatedlinks');
 
-const createLinkPromises = function(links, dbTable) {
-  let promises = [];
-  for(var ii = 0; ii < links.length; ii++) {
-    const link = links[ii];
-    // TODO: stagger the fetching of images:
 
+// This will get us a link array for each:
+
+const getRelatedLinkPromise = relatedLinks.find({image: null});
+const getUnrelatedLinksPromise = unrelatedLinks.find({image: null});
+const dbTables = [relatedLinks, unrelatedLinks];
+
+// TODO: refactor this:
+
+
+let relatedLinkPromises = [];
+getRelatedLinkPromise.each((link) => {
     const p = getImage(link)
     .then(function({image, link})  {
       console.log('Found an image:**********', image, 'link: ', link.url, link._id);
 
-      return dbTable.update({_id: link._id}, {$set: {image}})
+      return relatedLinks.update({_id: link._id}, {$set: {image}})
       .then((result) => {
         console.log('success inserting into db')
       })
@@ -195,33 +136,51 @@ const createLinkPromises = function(links, dbTable) {
       console.log('::::::::::::err', error);
       // getImage2(link);
     });
-    promises.push(p);
-  }
-  return promises;
-}
-
-// This will get us a link array for each:
-const getRelatedLinkPromise = relatedLinks.find({image: null});
-const getUnrelatedLinksPromise = unrelatedLinks.find({image: null});
-const dbTables = [relatedLinks, unrelatedLinks];
-
-// TODO: refactor this:
-Promise.all([getRelatedLinkPromise])
-.then( (links) => {
-   return Promise.all(createLinkPromises(links[0], relatedLinks));
+    relatedLinkPromises.push(p);
 })
-.finally(()=> {
-  console.log('Finally, unrelated links done');
-});
-
-
-Promise.all([getRelatedLinkPromise])
-.then( (links) => {
-   return Promise.all(createLinkPromises(links[0], unrelatedLinks));
+.then(() => {
+  return Bluebird.all(relatedLinkPromises);
 })
-.finally(()=> {
-  console.log('Finally, related links done');
-});
+.then(() => {
+  console.log("done with related links");
+})
+.catch((error) => { console.log(error); })
+              
+
+
+let unrealtedLinkPromises  = [];
+getUnrelatedLinksPromise.each((link) => {
+    const p = getImage(link)
+    .then(function({image, link})  {
+      console.log('Found an image:**********', image, 'link: ', link.url, link._id);
+
+      return unrelatedLinks.update({_id: link._id}, {$set: {image}})
+      .then((result) => {
+        console.log('success inserting into db')
+      })
+      .catch((error) => {
+        console.log('error updating link', error)
+      })
+    })
+    .catch(function(error){
+      console.log('::::::::::::err', error);
+      // getImage2(link);
+    });
+    unrealtedLinkPromises.push(p);
+})
+.then(() => {
+  return Bluebird.all(unrealtedLinkPromises);
+})
+.then(() => {
+  console.log("done with UNrelated links");
+})
+.catch((error) => { console.log(error); })
+
+
+
+
+
+
 
 
 

@@ -39,6 +39,14 @@ print "Feed:"
 print len(feed)
 random.shuffle(feed)
 
+
+for feedEntry in feed:
+    if 'image' in feedEntry:
+        print feedEntry['image']
+    else:
+        print 'No image:' 
+        print feedEntry['url']
+
 for user in db.users.find():
     user_id = user["_id"]
     db.feeds.update({"user" : user_id}, {"user" : user_id, "feedItems" : feed}, upsert=True)
