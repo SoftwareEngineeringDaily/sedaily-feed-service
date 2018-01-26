@@ -16,12 +16,17 @@ feed = []
 
 # Add 20 random related links
 related_links = []
+print "Related links count: "
+print len(related_links)
 for related_link in db.relatedlinks.find():
     related_links.append(related_link)
 for i in range(0, 20):
     rand = random.randint(0, len(related_links) - 1)
     feed.append(related_links[rand])
 
+
+print "Related links count: "
+print len(related_links)
 # Add 80 most recent unrelated links
 unrelated_links = []
 for link in db.unrelatedlinks.find({"$query":{}, "$orderby": {"date" : -1}}):    
@@ -29,6 +34,9 @@ for link in db.unrelatedlinks.find({"$query":{}, "$orderby": {"date" : -1}}):
         break
     feed.append(link)
 
+
+print "Feed:"
+print len(feed)
 random.shuffle(feed)
 
 for user in db.users.find():
