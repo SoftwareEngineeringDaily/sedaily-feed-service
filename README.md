@@ -32,3 +32,9 @@ If using conda / multiple python versions
 
 
 python2.7 -m pip install -r ./requirements.txt
+
+
+# Running locally
+
+
+ MONGO_DB=localhost/express-mongoose-es6-rest-api-development  python2.7 generate-feeds.py
