@@ -38,11 +38,10 @@ const getImage = function(link) {
           return resolve({image: obj.url, link});
         }
       });
-      console.log(data);
-      return reject({error: 'No image found', objects: data.objects })
+      return reject({error: 'No image found',  url , objects: data.objects })
     })
-    .catch(({error, objects})=> {
-      console.log('diffbot error-----------', error);
+    .catch(({error,  objects})=> {
+      console.log( 'diffbot error-----------', error);
       console.log('diffbot error objects-----------', objects);
       return reject({error, link});
     })
