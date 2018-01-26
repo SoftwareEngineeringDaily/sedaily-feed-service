@@ -2,6 +2,7 @@
 
 const htmlToJson  = require('html-to-json');
 const _ = require('lodash');
+const validUrl = require('valid-url');
 
 const axios = require('axios');
 require('dotenv').config();
@@ -85,11 +86,15 @@ const getImage = function(link) {
         return reject({error: err, link});
       } else {
         const images = result.images;
-        const bestImage = getBestImage(images);
-        if (bestImage == null ) {
-          return reject({error: 'No image found', link});
-        } else {
-          return resolve({image: bestImage, link});
+        try { 
+          const bestImage = getBestImage(images, url);
+          if (bestImage == null ) {
+            return reject({error: 'No image found', link});
+          } else {
+            return resolve({image: bestImage, link});
+          }
+        } catch(e)  {
+          return reject({error: e, link});
         }
       }
     });
