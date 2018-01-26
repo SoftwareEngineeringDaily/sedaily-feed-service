@@ -1,11 +1,11 @@
 // Script to add images to links that do not have one
 
+const htmlToJson  = require('html-to-json');
 const _ = require('lodash');
 
 const axios = require('axios');
 require('dotenv').config();
 var diffbotToken =   process.env.DIFFBOT_TOKEN;
-
 
 
 let Promise = require('bluebird');
@@ -15,6 +15,70 @@ db.then(() => {
   console.log('Connected correctly to server')
 })
 
+
+
+
+
+
+
+
+const getBestImage = function(images) {
+  if(images == null || images.legnth == 0 ) return null;
+  let  bestImage = images[0];
+  _.each(images, function(image) {
+    if(image.indexOf('.png') > 0 || 
+       image.indexOf('.jpeg') > 0 || 
+       image.indexOf('.jpg') > 0
+      ) { 
+        if(image.indexOf('http') === 0 || image.indexOf('www') === 0) {
+          bestImage = image;
+        }
+      }
+  });
+  return bestImage;
+}
+
+
+const url ='https://techcrunch.com/2018/01/09/the-ever-ending-story/';
+
+
+
+const getImage = function(link) {
+
+
+  let url = link.url;
+
+  if (url && url.indexOf('http') == 0 ) {
+  } else {
+    url  =  'http://' + url;
+    console.log('modified url', url);
+  }
+
+
+  var p = new Promise(function( resolve, reject)  { 
+    htmlToJson.request(url, {
+      'images': ['img', function ($img) {
+        return $img.attr('src');
+      }]
+    }, function (err, result) {
+      if(err) {
+        return reject({error: err, link});
+      } else {
+        const images = result.images;
+        const bestImage = getBestImage(images);
+        if (bestImage == null ) {
+          return reject({error: 'No image found', link});
+        } else {
+          return resolve({image: bestImage, link});
+        }
+      }
+    });
+  });
+  return p;
+}
+
+
+/*
 const getImage = function(link) {
 
   const p = new Promise(function(resolve, reject){
@@ -48,6 +112,8 @@ const getImage = function(link) {
   });
   return p;
 }
+
+*/
 
 
 // Deprecrated
