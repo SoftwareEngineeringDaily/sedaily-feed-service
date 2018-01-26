@@ -19,9 +19,9 @@ const getBestImage = function(images, url) {
        image.indexOf('.jpeg') > 0 || 
        image.indexOf('.jpg') > 0
       ) { 
-        // if(image.indexOf('http') === 0 || image.indexOf('www') === 0) {
+        if(image.indexOf('http') === 0 || image.indexOf('www') === 0) {
           bestImage = image;
-        // }
+        }
       }
   });
 
