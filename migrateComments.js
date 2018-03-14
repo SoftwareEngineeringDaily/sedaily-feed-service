@@ -9,7 +9,7 @@ comments.find( {root: {$exists: false}})
     const postId = comment.post;
     let promise = comments.update({id: comment.id}, {
       $set: {
-        root: postId,
+        rootEntity: postId,
       }
     });
     console.log('comment', comment);
