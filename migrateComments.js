@@ -4,10 +4,11 @@ const comments = db.get('comments')
 const Bluebird = require('bluebird');
 
 let promises = [];
-comments.find( {root: {$exists: false}})
+comments.find( {root: {$exists: false}, post: {$exists: true} })
   .each((comment) => {
     const postId = comment.post;
-    let promise = comments.update({id: comment.id}, {
+    console.log('postId', postId);
+    let promise = comments.update({_id: comment._id}, {
       $set: {
         rootEntity: postId,
       }
