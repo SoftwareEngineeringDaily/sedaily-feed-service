@@ -9,9 +9,14 @@ db.then(() => {
 
 const users = db.get('users')
 const listeneds = db.get('listeneds');
+const relatedLinks = db.get('relatedlinks');
 
 const collectLinks = function(userId, podcastId) {
   console.log(userId, podcastId)
+  relatedLinks.find({post: podcastId})
+  .each((link) => {
+    console.log('link', link);
+  })
 }
 
 const loopThroughListens = function(user) {
