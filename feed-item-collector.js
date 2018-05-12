@@ -10,11 +10,15 @@ db.then(() => {
 const users = db.get('users')
 const listeneds = db.get('listeneds');
 
+const collectLinks = function(userId, podcastId) {
+  console.log(userId, podcastId)
+}
+
 const loopThroughListens = function(user) {
-  const id = user._id;
-  listeneds.find({userId: id})
+  const userId = user._id;
+  listeneds.find({userId})
     .each((listened) => {
-      console.log(listened)
+      collectLinks(userId, listened.postId)
     })
 };
 users.find({})
