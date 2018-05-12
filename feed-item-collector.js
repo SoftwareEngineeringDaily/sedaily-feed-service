@@ -10,13 +10,23 @@ db.then(() => {
 const users = db.get('users')
 const listeneds = db.get('listeneds');
 const relatedLinks = db.get('relatedlinks');
+const feedItems = db.get('feedItems');
 
 const collectLinks = function(userId, podcastId) {
   console.log(userId, podcastId)
   relatedLinks.find({post: podcastId})
   .each((link) => {
-    console.log('link', link);
-  })
+    const feedItem = {
+      relatedLink: link._id,
+      user: userId
+    }
+    feedItems.insert(feedItem).then((insertedItem) => {
+      console.log('feedItem', insertedItem);
+    })
+    .catch((error) => {
+      console.log('error', error);
+    })
+  });
 }
 
 const loopThroughListens = function(user) {
