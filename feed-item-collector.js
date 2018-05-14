@@ -10,7 +10,7 @@ db.then(() => {
 const users = db.get('users')
 const listeneds = db.get('listeneds');
 const relatedLinks = db.get('relatedlinks');
-const feedItems = db.get('feedItems');
+const feedItems = db.get('feeditems');
 
 const collectLinks = function(userId, podcastId) {
   console.log(userId, podcastId)
@@ -21,7 +21,7 @@ const collectLinks = function(userId, podcastId) {
       user: userId
     }
     feedItems.insert(feedItem).then((insertedItem) => {
-      console.log('feedItem', insertedItem);
+      console.log('feeditem', insertedItem);
     })
     .catch((error) => {
       console.log('error', error);
