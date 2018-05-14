@@ -38,7 +38,10 @@ const loopThroughListens = function(user) {
       collectLinks(userId, listened.postId)
     })
 };
+
 users.find({})
   .each((user) => {
-    loopThroughListens(user);
+    feedItems.remove({user: user._id}).then( () => {
+      loopThroughListens(user);
+    })
   });
