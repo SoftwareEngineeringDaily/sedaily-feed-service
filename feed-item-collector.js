@@ -18,7 +18,9 @@ const collectLinks = function(userId, podcastId) {
   .each((link) => {
     const feedItem = {
       relatedLink: link._id,
-      user: userId
+      user: userId,
+      // We use a random order, might collide but unlikely:
+      randomOrder: Math.floor((Number.MAX_SAFE_INTEGER-10) * Math.random())
     }
     feedItems.insert(feedItem).then((insertedItem) => {
       console.log('feeditem', insertedItem);
