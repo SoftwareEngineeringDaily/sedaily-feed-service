@@ -1,4 +1,4 @@
-## -------------------------
+## -------------
 ## Deprecated 
 ## -------------
 Still need to migrate:
@@ -7,6 +7,7 @@ Still need to migrate:
 
 and
 ``` node links-add-descriptions.js```
+## ------------------------------------------------------
 
 
 This collection of scripts gathers links into a corpus and recommends them to users in a feed.
