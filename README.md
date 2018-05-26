@@ -1,3 +1,14 @@
+## -------------------------
+## Deprecated 
+## -------------
+Still need to migrate:
+
+```node links-add-images.js```
+
+and
+``` node links-add-descriptions.js```
+
+
 This collection of scripts gathers links into a corpus and recommends them to users in a feed.
 
 1. *miners/HN_miner.py*: scrapes links from Hacker News for the unrelated links collection
